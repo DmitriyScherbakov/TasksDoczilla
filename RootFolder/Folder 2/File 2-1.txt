@@ -1,0 +1,2 @@
+Это содержимое файла 2-1.
+require Folder 1/File 1-2.txt
