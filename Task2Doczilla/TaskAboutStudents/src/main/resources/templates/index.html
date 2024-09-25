@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+</head>
+<body>
+
+<h1>Student Management</h1>
+
+<!-- Form for adding students -->
+<form id="studentForm">
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" placeholder="Last Name" required>
+    <input type="text" id="middleName" placeholder="Middle Name">
+    <input type="date" id="dateOfBirth" required>
+    <input type="text" id="group" placeholder="Group Number" required>
+    <input type="text" id="uniqueNumber" placeholder="Unique Number" required>
+    <button type="submit">Add Student</button>
+</form>
+
+<!-- Button to retrieve all students -->
+<button id="getAllStudents">Get All Students</button>
+
+<!-- Button to delete student by ID -->
+<input type="number" id="studentId" placeholder="Student ID">
+<button id="deleteStudent">Delete Student</button>
+
+<div id="output"></div>
+
+<script>
+    // Add student
+    document.getElementById('studentForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const student = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            middleName: document.getElementById('middleName').value,
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+            group: document.getElementById('group').value,
+            uniqueNumber: document.getElementById('uniqueNumber').value
+        };
+
+        fetch('/students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(student)
+        })
+            .then(response => response.json())
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('output').innerText = 'Student added: ' + data;
+            });
+    });
+
+    // Get all students
+    document.getElementById('getAllStudents').addEventListener('click', function () {
+        fetch('/students')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText = 'Students: ' + JSON.stringify(data);
+            });
+    });
+
+    // Delete student by ID
+    document.getElementById('deleteStudent').addEventListener('click', function () {
+        const studentId = document.getElementById('studentId').value;
+
+        fetch(`/students/${studentId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('output').innerText = 'Deleted student with ID: ' + studentId;
+                } else {
+                    document.getElementById('output').innerText = 'Failed to delete student';
+                }
+            });
+    });
+</script>
+
+</body>
+</html>
