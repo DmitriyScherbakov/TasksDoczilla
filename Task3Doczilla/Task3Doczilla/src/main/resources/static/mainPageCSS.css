@@ -39,26 +39,35 @@ h1 {
 }
 
 .sidebar {
-    width: 400px;
+    width: 300px;
     background-color: #ccc;
     padding: 15px;
     border-radius: 8px;
     margin-right: 20px;
 }
 
-.sidebar button {
+.sidebar-button {
     width: 100%;
+    height: 50px;
     padding: 10px;
     background-color: #e0e0e0;
     border: none;
     border-radius: 5px;
     margin: 5px 0;
     cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
-.sidebar button:hover {
+.sidebar-button:hover {
     background-color: #d0d0d0;
 }
+
+.active-button {
+    background-color: #4caf50;
+}
+
 
 .main {
     flex: 1;
@@ -76,10 +85,17 @@ h1 {
     background-color: #f0f0f0;
     padding: 10px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin: 15px 0px 15px 0px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.todo-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 10px;
 }
 
 .todo-text {
@@ -100,20 +116,53 @@ h1 {
 }
 
 .todo-date {
+    margin-top: 10px;
     color: #666;
 }
 
 .checkbox {
     cursor: pointer;
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
+    appearance: none;
+    border: 2px solid #666;
+    border-radius: 4px;
+    outline: none;
+    transition: background-color 0.3s, border-color 0.3s;
+    position: relative;
+    margin-right: 8px;
+}
+
+.checkbox:checked {
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.checkbox:checked::before {
+    content: "✓";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 32px;
+    line-height: 24px;
+}
+
+.checkbox:hover {
+    border-color: #999;
+}
+
+.checkbox:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5);
 }
 
 .header2 {
-    display: flex; /* Используем флексбокс */
-    justify-content: space-between; /* Размещаем элементы по краям */
-    align-items: center; /* Центрируем по вертикали */
-    margin-bottom: 20px; /* Отступ снизу для разделения с todo-list */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .date-header {
@@ -122,16 +171,16 @@ h1 {
 }
 
 .sort-button {
-    padding: 5px 10px; /* Отступы внутри кнопки */
-    background-color: #fff; /* Цвет фона кнопки */
-    color: #666; /* Цвет текста кнопки */
-    border: none; /* Убираем рамку */
-    border-radius: 5px; /* Скругленные углы */
-    cursor: pointer; /* Изменяем курсор при наведении */
+    padding: 5px 10px;
+    background-color: #fff;
+    color: #666;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     transition: text-decoration 0.3s;
 }
 
 .sort-button:hover {
-    background-color: #fff; /* Цвет кнопки при наведении */
-    text-decoration: underline; /* Подчёркивание текста при наведении */
+    background-color: #fff;
+    text-decoration: underline;
 }

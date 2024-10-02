@@ -15,14 +15,27 @@
 
 <div class="container">
     <div class="sidebar">
-        <button>Сегодня</button>
-        <button>На неделю</button>
-        <h3>Календарь</h3>
+        <button id="todayButton" class="sidebar-button">Сегодня</button>
+        <button id="weekButton" class="sidebar-button">На неделю</button>
+        <script>
+            const todayButton = document.getElementById('todayButton');
+            const weekButton = document.getElementById('weekButton');
+
+            todayButton.addEventListener('click', () => {
+                todayButton.classList.add('active-button');
+                weekButton.classList.remove('active-button'); // Удаляем активный класс у другой кнопки
+            });
+
+            weekButton.addEventListener('click', () => {
+                weekButton.classList.add('active-button');
+                todayButton.classList.remove('active-button'); // Удаляем активный класс у другой кнопки
+            });
+        </script>
         <div>
             <input type="month" id="calendar" value="2022-05">
         </div>
         <div>
-            <input type="checkbox" id="onlyIncomplete">
+            <input class="sidebar-checkbox" type="checkbox" id="onlyIncomplete">
             <label for="onlyIncomplete">Только невыполненные</label>
         </div>
     </div>
@@ -39,11 +52,14 @@
                         <h3 th:text="${todo.name}" style="font-size: 30px">[Name]</h3>
                         <p th:text="${todo.shortDesc}" style="font-size: 20px">[Description]</p>
                     </div>
-                    <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
-                    <div class="todo-date" th:text="${todo.date}" style="font-size: 20px">[Date]</div>
+                    <div class="todo-actions"> <!-- Новый контейнер для чекбокса и даты -->
+                        <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
+                        <div class="todo-date" th:text="${todo.formattedDate}" style="font-size: 20px">[Date]</div>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

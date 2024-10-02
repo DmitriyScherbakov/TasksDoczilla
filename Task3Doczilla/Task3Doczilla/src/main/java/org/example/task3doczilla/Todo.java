@@ -18,4 +18,7 @@ public class Todo {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private LocalDateTime date;
     private boolean status;
+
+    // Добавим новое поле для форматированной даты
+    private String formattedDate;
 }
