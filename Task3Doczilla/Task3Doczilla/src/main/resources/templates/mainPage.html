@@ -1,10 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="mainPageCSS.css">
 </head>
 <body>
+
+<div class="header">
+    <input type="text" placeholder="Поиск...">
+    <div class="profile-icon"></div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <button>Сегодня</button>
+        <button>На неделю</button>
+        <h3>Календарь</h3>
+        <div>
+            <input type="month" id="calendar" value="2022-05">
+        </div>
+        <div>
+            <input type="checkbox" id="onlyIncomplete">
+            <label for="onlyIncomplete">Только невыполненные</label>
+        </div>
+    </div>
+
+    <div class="main">
+        <h1 class="date-header">8 мая 2022</h1>
+
+        <div class="todo-list">
+            <ul>
+                <li th:each="todo : ${todos}"> <!-- Use 'tasks' as defined in your controller -->
+                    <div class="todo-item">
+                        <div class="todo-text">
+                            <h3 th:text="${todo.name}">[Name]</h3>
+                            <p th:text="${todo.shortDesc}">[Description]</p>
+                        </div>
+                        <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
+                        <div class="todo-date" th:text="${todo.date}">[Date]</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
