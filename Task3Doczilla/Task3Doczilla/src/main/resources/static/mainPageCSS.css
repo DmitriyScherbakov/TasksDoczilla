@@ -1,0 +1,137 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.header1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ccc;
+    padding: 10px 20px;
+    border-bottom: 2px solid #bbb;
+}
+
+.header1 input[type="text"] {
+    padding: 5px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.header1 .profile-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #999;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 400px;
+    background-color: #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.sidebar button:hover {
+    background-color: #d0d0d0;
+}
+
+.main {
+    flex: 1;
+    background-color: #fff;
+    padding: 15px 30px 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.todo-list {
+    width: 100%;
+}
+
+.todo-item {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todo-text {
+    flex-grow: 1;
+    margin-right: 10px;
+    max-width: 75%;
+}
+
+.todo-text h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.todo-text p {
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+.todo-date {
+    color: #666;
+}
+
+.checkbox {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+
+.header2 {
+    display: flex; /* Используем флексбокс */
+    justify-content: space-between; /* Размещаем элементы по краям */
+    align-items: center; /* Центрируем по вертикали */
+    margin-bottom: 20px; /* Отступ снизу для разделения с todo-list */
+}
+
+.date-header {
+    font-size: 24px;
+    color: #666;
+}
+
+.sort-button {
+    padding: 5px 10px; /* Отступы внутри кнопки */
+    background-color: #fff; /* Цвет фона кнопки */
+    color: #666; /* Цвет текста кнопки */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Скругленные углы */
+    cursor: pointer; /* Изменяем курсор при наведении */
+    transition: text-decoration 0.3s;
+}
+
+.sort-button:hover {
+    background-color: #fff; /* Цвет кнопки при наведении */
+    text-decoration: underline; /* Подчёркивание текста при наведении */
+}

@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo List</title>
-    <link rel="stylesheet" href="mainPageCSS.css">
+    <link rel="stylesheet" href="../static/mainPageCSS.css">
 </head>
 <body>
 
-<div class="header">
+<div class="header1">
     <input type="text" placeholder="Поиск...">
     <div class="profile-icon"></div>
 </div>
@@ -28,21 +28,21 @@
     </div>
 
     <div class="main">
-        <h1 class="date-header">8 мая 2022</h1>
-
+        <div class="header2">
+            <h1 class="date-header" style="margin: 0;">8 мая 2022</h1> <!-- Убрал отступы -->
+            <button class="sort-button">Сортировать по дате</button>
+        </div>
         <div class="todo-list">
-            <ul>
-                <li th:each="todo : ${todos}"> <!-- Use 'tasks' as defined in your controller -->
-                    <div class="todo-item">
-                        <div class="todo-text">
-                            <h3 th:text="${todo.name}">[Name]</h3>
-                            <p th:text="${todo.shortDesc}">[Description]</p>
-                        </div>
-                        <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
-                        <div class="todo-date" th:text="${todo.date}">[Date]</div>
+            <div th:each="todo : ${todos}"> <!-- Заменяем <li> на <div> -->
+                <div class="todo-item">
+                    <div class="todo-text">
+                        <h3 th:text="${todo.name}" style="font-size: 30px">[Name]</h3>
+                        <p th:text="${todo.shortDesc}" style="font-size: 20px">[Description]</p>
                     </div>
-                </li>
-            </ul>
+                    <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
+                    <div class="todo-date" th:text="${todo.date}" style="font-size: 20px">[Date]</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
