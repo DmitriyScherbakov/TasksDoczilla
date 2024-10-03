@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,84 +32,149 @@ public class TaskController {
         return date.format(formatter);
     }
 
+    private long convertToEpochMilli(LocalDateTime dateTime) {
+        return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
     @GetMapping("/todos")
-    public String getTodos(Model model) {
+    public String getTodos(@RequestParam(value = "onlyIncomplete", required = false, defaultValue = "false") boolean onlyIncomplete, Model model) {
         // Получение данных из внешнего API
         Todo[] todos = restTemplate.getForObject(API_URL, Todo[].class);
+
+        // Фильтруем задачи по статусу, если необходимо
+        if (onlyIncomplete) {
+            todos = Arrays.stream(todos)
+                    .filter(todo -> !todo.isStatus())
+                    .toArray(Todo[]::new);
+        }
 
         // Форматируем дату для каждого Todo
         for (Todo todo : todos) {
             todo.setFormattedDate(formatDate(todo.getDate()));
         }
 
-        // Добавляем задачи в модель, чтобы передать их в представление
+        // Форматируем текущую дату
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        model.addAttribute("currentDate", formattedDate); // Добавляем текущую дату в модель
+
+        // Добавляем задачи в модель
         model.addAttribute("todos", todos);
         return "mainPage";
     }
 
+
+
+
     @GetMapping("/todos/today")
-    public String getTodosForToday(Model model) {
+    public String getTodosForToday(
+            @RequestParam(value = "onlyIncomplete", required = false, defaultValue = "false") boolean onlyIncomplete,
+            Model model) {
         // Получаем текущую дату
         LocalDate today = LocalDate.now();
-        // Устанавливаем начало и конец дня
         LocalDateTime fromDate = today.atStartOfDay();
         LocalDateTime toDate = today.atTime(23, 59, 59);
 
-        // Конвертируем в миллисекунды
         long fromEpoch = convertToEpochMilli(fromDate);
         long toEpoch = convertToEpochMilli(toDate);
 
-        // Создаем параметры для API
         Map<String, Object> params = new HashMap<>();
         params.put("from", fromEpoch);
         params.put("to", toEpoch);
 
-        // Запрос к API
         Todo[] todos = restTemplate.getForObject(API_URL_DATE + "?from={from}&to={to}", Todo[].class, params);
+
+        // Фильтруем задачи по статусу, если включен фильтр только для невыполненных
+        if (onlyIncomplete) {
+            todos = Arrays.stream(todos)
+                    .filter(todo -> !todo.isStatus())
+                    .toArray(Todo[]::new);
+        }
 
         // Форматируем дату для каждого Todo
         for (Todo todo : todos) {
             todo.setFormattedDate(formatDate(todo.getDate()));
         }
 
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        model.addAttribute("currentDate", formattedDate);
         model.addAttribute("todos", todos);
+        model.addAttribute("onlyIncomplete", onlyIncomplete);
         return "mainPage";
     }
 
     @GetMapping("/todos/week")
-    public String getTodosForWeek(Model model) {
-        // Получаем текущую дату
+    public String getTodosForWeek(
+            @RequestParam(value = "onlyIncomplete", required = false, defaultValue = "false") boolean onlyIncomplete,
+            Model model) {
         LocalDate today = LocalDate.now();
-        // Устанавливаем начало недели (понедельник) и конец недели (воскресенье)
         LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
-        // Устанавливаем начало и конец дня
         LocalDateTime fromDate = startOfWeek.atStartOfDay();
         LocalDateTime toDate = endOfWeek.atTime(23, 59, 59);
 
-        // Конвертируем в миллисекунды
         long fromEpoch = convertToEpochMilli(fromDate);
         long toEpoch = convertToEpochMilli(toDate);
 
-        // Создаем параметры для API
         Map<String, Object> params = new HashMap<>();
         params.put("from", fromEpoch);
         params.put("to", toEpoch);
 
-        // Запрос к API
         Todo[] todos = restTemplate.getForObject(API_URL_DATE + "?from={from}&to={to}", Todo[].class, params);
 
-        // Форматируем дату для каждого Todo
+        if (onlyIncomplete) {
+            todos = Arrays.stream(todos)
+                    .filter(todo -> !todo.isStatus())
+                    .toArray(Todo[]::new);
+        }
+
         for (Todo todo : todos) {
             todo.setFormattedDate(formatDate(todo.getDate()));
         }
 
+        // Форматируем текущую дату
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        model.addAttribute("currentDate", formattedDate);
         model.addAttribute("todos", todos);
+        model.addAttribute("onlyIncomplete", onlyIncomplete);
         return "mainPage";
     }
 
-    private long convertToEpochMilli(LocalDateTime dateTime) {
-        return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    @GetMapping("/todos/range")
+    public String getTodosForDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "onlyIncomplete", required = false, defaultValue = "false") boolean onlyIncomplete,
+            Model model) {
+        LocalDateTime fromDate = startDate.atStartOfDay();
+        LocalDateTime toDate = endDate.atTime(23, 59, 59);
+
+        long fromEpoch = convertToEpochMilli(fromDate);
+        long toEpoch = convertToEpochMilli(toDate);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("from", fromEpoch);
+        params.put("to", toEpoch);
+
+        Todo[] todos = restTemplate.getForObject(API_URL_DATE + "?from={from}&to={to}", Todo[].class, params);
+
+        if (onlyIncomplete) {
+            todos = Arrays.stream(todos)
+                    .filter(todo -> !todo.isStatus())
+                    .toArray(Todo[]::new);
+        }
+
+        for (Todo todo : todos) {
+            todo.setFormattedDate(formatDate(todo.getDate()));
+        }
+
+
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        model.addAttribute("currentDate", formattedDate);
+        model.addAttribute("todos", todos);
+        model.addAttribute("onlyIncomplete", onlyIncomplete);
+        return "mainPage";
     }
+
+
 }

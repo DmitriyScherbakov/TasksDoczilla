@@ -16,18 +16,24 @@
 <div class="container">
     <div class="sidebar">
 
-        <button id="todayButton" class="sidebar-button" onclick="window.location.href='/todos/today?active=today'">Сегодня</button>
-        <button id="weekButton" class="sidebar-button" onclick="window.location.href='/todos/week?active=week'">На неделю</button>
+        <button id="todayButton" class="sidebar-button"
+                onclick="toggleFilter('/todos/today?active=today', 'today')">Сегодня
+        </button>
+        <button id="weekButton" class="sidebar-button" onclick="toggleFilter('/todos/week?active=week', 'week')">На неделю
+        </button>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const todayButton = document.getElementById('todayButton');
                 const weekButton = document.getElementById('weekButton');
+                const checkbox = document.getElementById('onlyIncomplete');
 
-                // Проверяем URL на наличие параметра "active"
+                // Проверяем URL на наличие параметра "active" и "onlyIncomplete"
                 const urlParams = new URLSearchParams(window.location.search);
                 const activeParam = urlParams.get('active');
+                const onlyIncomplete = urlParams.get('onlyIncomplete') === 'true'; // Получаем состояние флага
 
+                // Добавляем активный класс к кнопке
                 if (activeParam === 'today') {
                     todayButton.classList.add('active-button');
                 }
@@ -36,51 +42,133 @@
                     weekButton.classList.add('active-button');
                 }
 
-                // Добавляем обработчики событий для кнопок
+                // Сохраняем состояние чекбокса при загрузке страницы
+                checkbox.checked = onlyIncomplete;
+
+                // Добавляем обработчики для кнопок
                 todayButton.addEventListener('click', () => {
-                    todayButton.classList.add('active-button');
-                    weekButton.classList.remove('active-button');
+                    if (todayButton.classList.contains('active-button')) {
+                        window.location.href = `/todos?onlyIncomplete=${onlyIncomplete}`;  // Сброс фильтрации
+                    } else {
+                        todayButton.classList.add('active-button');
+                        weekButton.classList.remove('active-button');
+                    }
                 });
 
                 weekButton.addEventListener('click', () => {
-                    weekButton.classList.add('active-button');
-                    todayButton.classList.remove('active-button');
+                    if (weekButton.classList.contains('active-button')) {
+                        window.location.href = `/todos?onlyIncomplete=${onlyIncomplete}`;  // Сброс фильтрации
+                    } else {
+                        weekButton.classList.add('active-button');
+                        todayButton.classList.remove('active-button');
+                    }
                 });
             });
+
+            // Функция для навигации с передачей параметра onlyIncomplete
+            function toggleFilter(url, filter) {
+                const onlyIncomplete = document.getElementById('onlyIncomplete').checked;
+                const currentUrlParams = new URLSearchParams(window.location.search);
+                const activeParam = currentUrlParams.get('active');
+
+                // Если фильтр уже активен, сбрасываем его
+                if (activeParam === filter) {
+                    window.location.href = `/todos?onlyIncomplete=${onlyIncomplete}`;
+                } else {
+                    window.location.href = `${url}&onlyIncomplete=${onlyIncomplete}`;
+                }
+            }
         </script>
-        <div>
-            <form>
-                <p>Выберите дату: <input type="date" name="calendar">
-                    <input type="submit" value="Отправить"></p>
+
+        <div class="range-date-form">
+            <form id="dateRangeForm" action="/todos/range" method="get">
+                <p>Выберите диапазон дат:
+                    <input type="date" name="startDate" required>
+                    <input type="date" name="endDate" required>
+                    <input type="submit" value="Отправить">
+                </p>
             </form>
         </div>
-        <div>
-            <input class="sidebar-checkbox" type="checkbox" id="onlyIncomplete">
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const checkbox = document.getElementById('onlyIncomplete');
+                const dateRangeForm = document.getElementById('dateRangeForm');
+
+                dateRangeForm.addEventListener('submit', function (event) {
+                    // Получаем состояние чекбокса
+                    const onlyIncomplete = checkbox.checked;
+
+                    // Создаем URL с параметрами
+                    const formData = new FormData(dateRangeForm);
+                    const params = new URLSearchParams(formData);
+                    params.set('onlyIncomplete', onlyIncomplete);
+
+                    // Отменяем стандартное поведение формы
+                    event.preventDefault();
+
+                    // Перенаправляем на URL с параметрами
+                    window.location.href = `/todos/range?${params.toString()}`;
+                });
+
+                // При загрузке страницы сохраняем состояние чекбокса, если оно установлено
+                const urlParams = new URLSearchParams(window.location.search);
+                const onlyIncomplete = urlParams.get('onlyIncomplete');
+                if (onlyIncomplete === 'true') {
+                    checkbox.checked = true;
+                }
+            });
+        </script>
+
+        <div class="sidebar-checkbox-container">
+            <input class="sidebar-checkbox" type="checkbox" id="onlyIncomplete"
+                   th:checked="${param.onlyIncomplete == 'true'}">
             <label for="onlyIncomplete">Только невыполненные</label>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const checkbox = document.getElementById('onlyIncomplete');
+
+                checkbox.addEventListener('change', function () {
+                    // Проверяем состояние чекбокса
+                    const onlyIncomplete = checkbox.checked;
+
+                    // Обновляем URL с параметром onlyIncomplete
+                    window.location.href = `/todos?onlyIncomplete=${onlyIncomplete}`;
+                });
+
+                // При загрузке страницы сохраняем состояние чекбокса, если оно установлено
+                const urlParams = new URLSearchParams(window.location.search);
+                const onlyIncomplete = urlParams.get('onlyIncomplete');
+                if (onlyIncomplete === 'true') {
+                    checkbox.checked = true;
+                }
+            });
+        </script>
+
     </div>
 
     <div class="main">
         <div class="header2">
-            <h1 class="date-header" style="margin: 0;">8 мая 2022</h1> <!-- Убрал отступы -->
+            <h1 class="date-header" style="margin: 0;" th:text="${currentDate}"></h1>
             <button class="sort-button">Сортировать по дате</button>
         </div>
         <div class="todo-list">
-            <div th:each="todo : ${todos}"> <!-- Заменяем <li> на <div> -->
+            <div th:each="todo : ${todos}">
                 <div class="todo-item">
                     <div class="todo-text">
                         <h3 th:text="${todo.name}" style="font-size: 30px">[Name]</h3>
                         <p th:text="${todo.shortDesc}" style="font-size: 20px">[Description]</p>
                     </div>
-                    <div class="todo-actions"> <!-- Новый контейнер для чекбокса и даты -->
+                    <div class="todo-actions">
                         <input type="checkbox" class="checkbox" th:checked="${todo.status}"/>
                         <div class="todo-date" th:text="${todo.formattedDate}" style="font-size: 20px">[Date]</div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
+
 </div>
 
 </body>
