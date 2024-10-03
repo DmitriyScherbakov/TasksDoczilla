@@ -15,24 +15,44 @@
 
 <div class="container">
     <div class="sidebar">
-        <button id="todayButton" class="sidebar-button">Сегодня</button>
-        <button id="weekButton" class="sidebar-button">На неделю</button>
+
+        <button id="todayButton" class="sidebar-button" onclick="window.location.href='/todos/today?active=today'">Сегодня</button>
+        <button id="weekButton" class="sidebar-button" onclick="window.location.href='/todos/week?active=week'">На неделю</button>
+        
         <script>
-            const todayButton = document.getElementById('todayButton');
-            const weekButton = document.getElementById('weekButton');
+            document.addEventListener('DOMContentLoaded', function() {
+                const todayButton = document.getElementById('todayButton');
+                const weekButton = document.getElementById('weekButton');
 
-            todayButton.addEventListener('click', () => {
-                todayButton.classList.add('active-button');
-                weekButton.classList.remove('active-button'); // Удаляем активный класс у другой кнопки
-            });
+                // Проверяем URL на наличие параметра "active"
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeParam = urlParams.get('active');
 
-            weekButton.addEventListener('click', () => {
-                weekButton.classList.add('active-button');
-                todayButton.classList.remove('active-button'); // Удаляем активный класс у другой кнопки
+                if (activeParam === 'today') {
+                    todayButton.classList.add('active-button');
+                }
+
+                if (activeParam === 'week') {
+                    weekButton.classList.add('active-button');
+                }
+
+                // Добавляем обработчики событий для кнопок
+                todayButton.addEventListener('click', () => {
+                    todayButton.classList.add('active-button');
+                    weekButton.classList.remove('active-button');
+                });
+
+                weekButton.addEventListener('click', () => {
+                    weekButton.classList.add('active-button');
+                    todayButton.classList.remove('active-button');
+                });
             });
         </script>
         <div>
-            <input type="month" id="calendar" value="2022-05">
+            <form>
+                <p>Выберите дату: <input type="date" name="calendar">
+                    <input type="submit" value="Отправить"></p>
+            </form>
         </div>
         <div>
             <input class="sidebar-checkbox" type="checkbox" id="onlyIncomplete">

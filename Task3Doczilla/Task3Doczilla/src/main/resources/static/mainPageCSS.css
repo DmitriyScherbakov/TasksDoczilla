@@ -39,7 +39,7 @@ h1 {
 }
 
 .sidebar {
-    width: 300px;
+    width: 325px;
     background-color: #ccc;
     padding: 15px;
     border-radius: 8px;
@@ -65,9 +65,18 @@ h1 {
 }
 
 .active-button {
-    background-color: #4caf50;
+    background-color: #4caf50; /* Цвет фона для активной кнопки */
+    color: white; /* Цвет текста для активной кнопки */
 }
 
+
+.sidebar-checkbox{
+    margin-left: 0;
+    margin-bottom: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
 
 .main {
     flex: 1;
