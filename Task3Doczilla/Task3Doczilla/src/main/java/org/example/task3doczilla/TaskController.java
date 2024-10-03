@@ -72,7 +72,6 @@ public class TaskController {
         }
 
         model.addAttribute("todos", todos);
-        //model.addAttribute("activeButton", "today");
         return "mainPage";
     }
 
